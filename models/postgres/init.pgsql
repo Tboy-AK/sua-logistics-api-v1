@@ -5,7 +5,6 @@ CREATE SEQUENCE IF NOT EXISTS admins_id_seq;
 CREATE SEQUENCE IF NOT EXISTS riders_id_seq;
 CREATE SEQUENCE IF NOT EXISTS partners_id_seq;
 CREATE SEQUENCE IF NOT EXISTS customers_id_seq;
-CREATE SEQUENCE IF NOT EXISTS jurisdictions_id_seq;
 CREATE SEQUENCE IF NOT EXISTS orders_id_seq;
 CREATE SEQUENCE IF NOT EXISTS order_items_id_seq;
 
@@ -60,16 +59,15 @@ DROP TABLE IF EXISTS admins CASCADE;
 DROP TABLE IF EXISTS riders CASCADE;
 DROP TABLE IF EXISTS partners CASCADE;
 DROP TABLE IF EXISTS customers CASCADE;
-DROP TABLE IF EXISTS jurisdictions CASCADE;
 DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS order_items CASCADE;
 
 
 -- CREATE ENUMS
   
-CREATE TYPE IF NOT EXISTS "USER_TYPE" AS ENUM ('admin', 'partner', 'rider', 'customer');
+CREATE TYPE "USER_TYPE" AS ENUM ('admin', 'partner', 'rider', 'customer');
 
-CREATE TYPE IF NOT EXISTS "ORDER_STATUS" AS ENUM ('in cart', 'ordered', 'in transit', 'delivered', 'completed', 'returned');
+CREATE TYPE "ORDER_STATUS" AS ENUM ('in cart', 'ordered', 'in transit', 'delivered', 'completed', 'returned');
 
 
 -- CREATE TABLES AND TRIGGERS
@@ -79,17 +77,13 @@ CREATE TABLE IF NOT EXISTS auths (
   email CHARACTER VARYING (100) COLLATE pg_catalog."default" NOT NULL,
   phone CHARACTER VARYING (20) COLLATE pg_catalog."default" NOT NULL,
   password CHARACTER VARYING (1024) COLLATE pg_catalog."default" NOT NULL,
-  user "USER_TYPE" NOT NULL,
+  user_type "USER_TYPE" NOT NULL,
   _v INTEGER DEFAULT 1 NOT NULL,
   created_at TIMESTAMPTZ NOT NULL,
   modified_at TIMESTAMPTZ NOT NULL,
   CONSTRAINT auths_pkey PRIMARY KEY (_id),
   CONSTRAINT auths_email_key UNIQUE (email),
-  CONSTRAINT auths_phone_key UNIQUE (phone),
-  CONSTRAINT auths_user_type_id_fkey FOREIGN KEY (user_type_id)
-    REFERENCES PUBLIC.user_types (_id) MATCH SIMPLE
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  CONSTRAINT auths_phone_key UNIQUE (phone)
 );
 
 COMMENT ON TABLE PUBLIC.auths
@@ -166,26 +160,16 @@ CREATE TABLE IF NOT EXISTS customers (
   _v INTEGER DEFAULT 1 NOT NULL,
   created_at TIMESTAMPTZ NOT NULL,
   modified_at TIMESTAMPTZ NOT NULL,
-  CONSTRAINT categories_pkey PRIMARY KEY (_id),
-  CONSTRAINT categories_name_key UNIQUE ("name")
+  CONSTRAINT customers_pkey PRIMARY KEY (_id),
+  CONSTRAINT customers_auth_id_key UNIQUE (auth_id),
+  CONSTRAINT customers_auth_id_fkey FOREIGN KEY (auth_id)
+    REFERENCES PUBLIC.auths (_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 COMMENT ON TABLE PUBLIC.customers
   IS 'Table where customers are recorded';
-
-
-CREATE TABLE IF NOT EXISTS jurisdictions (
-  _id INTEGER GENERATED ALWAYS AS IDENTITY,
-  city CHARACTER VARYING (100) COLLATE pg_catalog."default",
-  google_maps_id INTEGER NOT NULL,
-  _v INTEGER DEFAULT 1 NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL,
-  modified_at TIMESTAMPTZ NOT NULL,
-  CONSTRAINT articles_pkey PRIMARY KEY (_id)
-);
-
-COMMENT ON TABLE PUBLIC.jurisdictions
-  IS 'Table where jurisdictions are referenced from';
 
 
 CREATE TABLE IF NOT EXISTS orders (
@@ -194,12 +178,14 @@ CREATE TABLE IF NOT EXISTS orders (
   partner_id INTEGER NOT NULL,
   rider_id INTEGER NOT NULL,
   status "ORDER_STATUS" NOT NULL,
-  discount NUMERIC NOT NULL DEFAULT 0.00 MIN 0 MAX 1,
+  discount NUMERIC NOT NULL DEFAULT 0.00,
+  address CHARACTER VARYING (100) COLLATE pg_catalog."default" NOT NULL,
   "desc" TEXT COLLATE pg_catalog."default" NOT NULL,
   _v INTEGER DEFAULT 1 NOT NULL,
   created_at TIMESTAMPTZ NOT NULL,
   modified_at TIMESTAMPTZ NOT NULL,
   CONSTRAINT orders_pkey PRIMARY KEY (_id),
+  CONSTRAINT order_items_quantity_range CHECK(discount >= 0 AND discount <= 1),
   CONSTRAINT orders_customer_id_fkey FOREIGN KEY (customer_id)
     REFERENCES PUBLIC.customers (_id) MATCH SIMPLE
     ON UPDATE CASCADE
@@ -211,10 +197,6 @@ CREATE TABLE IF NOT EXISTS orders (
   CONSTRAINT orders_rider_id_fkey FOREIGN KEY (rider_id)
     REFERENCES PUBLIC.riders (_id) MATCH SIMPLE
     ON UPDATE CASCADE
-    ON DELETE CASCADE,
-  CONSTRAINT orders_order_status_id_fkey FOREIGN KEY (order_status_id)
-    REFERENCES PUBLIC.order_statuses (_id) MATCH SIMPLE
-    ON UPDATE CASCADE
     ON DELETE CASCADE
 );
 
@@ -224,14 +206,15 @@ COMMENT ON TABLE PUBLIC.orders
 
 CREATE TABLE IF NOT EXISTS order_items (
   _id INTEGER GENERATED ALWAYS AS IDENTITY,
-  "name" CHARACTER VARYING (100) COLLATE pg_catalogue."default" NOT NULL,
-  quantity INTEGER NOT NULL DEFAULT 1 MIN 1,
-  unit CHARACTER VARYING (20) COLLATE pg_catalogue."default" NOT NULL,
+  "name" CHARACTER VARYING (100) COLLATE pg_catalog."default" NOT NULL,
+  quantity INTEGER NOT NULL DEFAULT 1,
+  unit CHARACTER VARYING (20) COLLATE pg_catalog."default" NOT NULL,
   order_id INTEGER NOT NULL,
   created_at TIMESTAMPTZ NOT NULL,
   modified_at TIMESTAMPTZ NOT NULL,
   CONSTRAINT articles_and_categories_pkey PRIMARY KEY (_id),
-  CONSTRAINT order_items_name_fkey UNIQUE ("name"),
+  CONSTRAINT order_items_name_key UNIQUE ("name"),
+  CONSTRAINT order_items_quantity_range CHECK(quantity > 0),
   CONSTRAINT order_items_order_id_fkey FOREIGN KEY (order_id)
     REFERENCES PUBLIC.orders (_id) MATCH SIMPLE
     ON UPDATE CASCADE
@@ -345,27 +328,6 @@ CREATE TRIGGER customers_timestamp_on_modify
 CREATE TRIGGER customers_row_version_on_modify
   BEFORE UPDATE
   ON PUBLIC.customers
-  FOR EACH ROW
-  EXECUTE PROCEDURE PUBLIC.row_version_on_modify();
-
-
-CREATE TRIGGER jurisdictions_timestamp_on_create
-  BEFORE INSERT
-  ON PUBLIC.jurisdictions
-  FOR EACH ROW
-  EXECUTE PROCEDURE PUBLIC.timestamp_on_create();
-
-
-CREATE TRIGGER jurisdictions_timestamp_on_modify
-  BEFORE INSERT OR UPDATE
-  ON PUBLIC.jurisdictions
-  FOR EACH ROW
-  EXECUTE PROCEDURE PUBLIC.timestamp_on_modify();
-
-
-CREATE TRIGGER jurisdictions_row_version_on_modify
-  BEFORE UPDATE
-  ON PUBLIC.jurisdictions
   FOR EACH ROW
   EXECUTE PROCEDURE PUBLIC.row_version_on_modify();
 
