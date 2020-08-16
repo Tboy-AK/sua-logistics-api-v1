@@ -33,6 +33,6 @@ server.use('/api', [
 ]);
 server.use('/admin', [AdminPageRouter, AdminAuthsRouter]);
 
-server.listen(port, () => {
+module.exports = server.listen(port, () => {
   console.log(`Listening on ${hostname}:${port}`);
 });
