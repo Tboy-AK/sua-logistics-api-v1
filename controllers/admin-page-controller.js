@@ -57,7 +57,7 @@ const adminPageController = (errResponse, AuthModel, AdminModel) => {
                     header: {
                       Authorization: 'String',
                     },
-                    desc: 'User gets registered as admin by an existing admin',
+                    desc: 'Admin registers a new admin',
                     res: {
                       dataType: 'Object',
                     },
@@ -65,7 +65,7 @@ const adminPageController = (errResponse, AuthModel, AdminModel) => {
                 },
               },
               {
-                url: '/admin/auth',
+                url: '/admin/auths',
                 methods: {
                   POST: {
                     desc: 'Admin can login',
