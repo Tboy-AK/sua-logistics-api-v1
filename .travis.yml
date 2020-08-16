@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - node
+cache: npm
+env:
+  global:
+    - NODE_ENV=test
+deploy:
+  - cleanup: false
+    provider: heroku
+    api_key:
+      secure: nz6QPIzQUeFdfjQTLs5Big8NZYmPfRindZBnzGfec2CKWOQ5sKIUsBajC48iJQ3+HMc7J5LnyiPjmeI+d7Momt6wQ6uAj5Iy60EosxfvSaoHf/fAOlFdBP47ce+SkoFXlXwuuS+TLJDH3HKJaIxraKoXLgxFlVlBjP+fVJEdMX6cgDEpAJezXY9eknQzsWXafHUV7Q9/pZekAMaXFdKat8ZskI6QViEfmkMHU36afPsgYt3byHGvIAXjyozNwtx56ShT4xmCEJ8yEn82W8gmMHDveYXmYc/s0IlhaSPKV4HfuQVNBgyg0Uraa9ItIo1y8/Zn9w5+JKfsy5bRi3JZJ8//Ua4+fuV4MmpnVYp3Pss17sgoVe5cZ/3nTLev2GD6puG44r6i2QekpgDCTiKDggn0OEw2CYjO4HJIefvMlVf5sgxRFNhXFbpIkbT0BXm27DQ87OsiNDbudw/vP8+yQ91Vd/k253Xx+a9k+GeEBG9k7ZgMWuRq5ph8GKGtGc+eKvvLQ2YUUvUjd45d8+yEmsLYw0R5En+UHlzOSZ8ndY8OUJoiOjQdRDrg+LFuYxflIjJavO0kO2DZL/cv4LgZmImWqvDK2V+/XT77YTUFJUzHOO/GF4AuVWXKOtXKkTh+/bWg8VLLH1mmCEUvIjm4R5rmJvrcwr5rsnsFH/GjKpE=
+    app: sua-logistics-app
+    on:
+      repo: Tboy-AK/sua-logistics-api-v1
+      branch: develop
