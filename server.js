@@ -9,6 +9,7 @@ const { AdminPageRouter } = require('./routers/admin-page-router');
 const { AdminAuthsRouter } = require('./routers/admin-auths-router');
 const { CustomersRouter } = require('./routers/customers-router');
 const { RidersRouter } = require('./routers/riders-router');
+const { PartnersRouter } = require('./routers/partners-router');
 
 const { urlencoded, json } = express;
 
@@ -20,7 +21,7 @@ const hostname = process.env.HOSTNAME || 'localhost';
 server.use([urlencoded({ extended: false }), json()]);
 
 server.use('/', [MainPageRouter]);
-server.use('/api', [ApiNavRouter, CustomersRouter, RidersRouter]);
+server.use('/api', [ApiNavRouter, CustomersRouter, RidersRouter, PartnersRouter]);
 server.use('/admin', [AdminPageRouter, AdminAuthsRouter]);
 
 server.listen(port, () => {
