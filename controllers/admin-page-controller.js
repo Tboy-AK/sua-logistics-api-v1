@@ -2,7 +2,7 @@ const adminPageController = () => {
   const adminPage = (req, res) => {
     res.status(200).send(`
     <main>
-      <form method="POST">
+      <form method="POST" action="/admin/auths">
         <label>
           <span>Email</span>
           <input type="text" name="email" placeholder="admin@email.com" />
@@ -17,7 +17,7 @@ const adminPageController = () => {
     `);
   };
 
-  const adminEntry = (req, res) => {
+  const adminAccess = (req, res) => {
     const adminNavDoc = [
       {
         url: '/admin',
@@ -40,7 +40,7 @@ const adminPageController = () => {
     res.status(200).json(adminNavDoc);
   };
 
-  return { adminPage, adminEntry };
+  return { adminPage, adminAccess };
 };
 
 module.exports = adminPageController;
