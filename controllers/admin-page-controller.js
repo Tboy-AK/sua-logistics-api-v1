@@ -1,4 +1,9 @@
-const adminPageController = () => {
+/* eslint-disable no-underscore-dangle */
+const { validationResult } = require('express-validator');
+const { compare } = require('bcryptjs');
+const { sign } = require('jsonwebtoken');
+
+const adminPageController = (errResponse, AuthModel, AdminModel) => {
   const adminPage = (req, res) => {
     res.status(200).send(`
     <main>
@@ -18,26 +23,107 @@ const adminPageController = () => {
   };
 
   const adminAccess = (req, res) => {
-    const adminNavDoc = [
-      {
-        url: '/admin',
-        methods: {
-          GET: {
-            desc: 'Admin must login',
-            res: {
-              dataType: 'HTML/TEXT',
-            },
-          },
-          POST: {
-            desc: 'Admin route documentation',
-            res: {
-              dataType: 'Array',
-            },
-          },
-        },
-      },
-    ];
-    res.status(200).json(adminNavDoc);
+    // validate user request data
+    const validationError = validationResult(req);
+    if (!validationError.isEmpty()) {
+      return errResponse(res, 422, validationError
+        .array({ onlyFirstError: true }));
+    }
+
+    const reqBody = req.body;
+
+    // check that user exists
+    return AuthModel.findOne({ email: reqBody.email })
+      .then((result) => {
+        if (!result) return errResponse(res, 401);
+        if (result.userType !== 'admin') return errResponse(res, 401);
+
+        // compare user password
+        return compare(reqBody.password, result.password)
+          .then(async (isPasswordValid) => {
+            if (!isPasswordValid) return errResponse(res, 401, 'Incorrect password');
+
+            const adminNavDoc = [
+              {
+                url: '/admin',
+                methods: {
+                  GET: {
+                    desc: 'Admin must login via form',
+                    res: {
+                      dataType: 'HTML/TEXT',
+                    },
+                  },
+                  POST: {
+                    header: {
+                      Authorization: 'String',
+                    },
+                    desc: 'User gets registered as admin by an existing admin',
+                    res: {
+                      dataType: 'Object',
+                    },
+                  },
+                },
+              },
+              {
+                url: '/admin/auth',
+                methods: {
+                  POST: {
+                    desc: 'Admin can login',
+                    res: {
+                      dataType: 'Array',
+                    },
+                  },
+                },
+              },
+            ];
+
+            let adminData;
+            try {
+              adminData = await AdminModel.findOne({ authId: result._id });
+            } catch (err) {
+              return errResponse(res, 500, err.message);
+            }
+
+            // create user access token
+            const userPayload = {
+              // eslint-disable-next-line no-underscore-dangle
+              uid: result._id,
+              email: result.email,
+              adminId: adminData._id,
+            };
+            const accessTokenOptions = {
+              algorithm: 'HS256', audience: result.userType, expiresIn: 600, issuer: 'SUA',
+            };
+            const accessToken = sign(userPayload, process.env.RSA_PRIVATE_KEY, accessTokenOptions);
+            const refreshTokenOptions = { ...accessTokenOptions, expiresIn: 30 * 24 * 3600 };
+            const refreshToken = sign(
+              userPayload,
+              process.env.RSA_PRIVATE_KEY,
+              refreshTokenOptions,
+            );
+            const cookieOptions = {
+              maxAge: 30 * 24 * 3600000,
+              secure: false,
+              sameSite: 'none',
+              httpOnly: false,
+              path: '/api/v1.0.1/admin/auth/refresh-user-session',
+              domain: req.hostname !== 'localhost' ? `.${req.hostname}` : 'localhost',
+            };
+
+            return res
+              .status(200)
+              .header('Authorization', accessToken)
+              .cookie('SUALogistics', refreshToken, cookieOptions)
+              .json({
+                message: 'Successfully logged in',
+                accessExp: accessTokenOptions.expiresIn,
+                refreshExp: refreshTokenOptions.expiresIn,
+                adminNavDoc,
+              });
+          })
+          .catch((err) => errResponse(res, 500, err.message));
+      })
+      .catch((err) => errResponse(res, 500, err.message));
   };
 
   return { adminPage, adminAccess };

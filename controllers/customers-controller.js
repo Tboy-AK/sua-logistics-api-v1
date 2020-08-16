@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-const { hash, genSaltSync } = require('bcryptjs');
 const { validationResult } = require('express-validator');
+const { hash, genSaltSync } = require('bcryptjs');
 const { sign } = require('jsonwebtoken');
 
 const customersController = (errResponse, AuthsModel, CustomersModel) => {
