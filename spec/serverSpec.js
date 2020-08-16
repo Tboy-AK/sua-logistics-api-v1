@@ -5,7 +5,6 @@ describe('GET /', () => {
   const response = {};
   beforeAll(async (done) => {
     request(`http://localhost:${process.env.PORT || 3000}/`, (err, res, body) => {
-      console.log(body);
       response.status = res.statusCode;
       response.body = body;
       done();
