@@ -53,7 +53,6 @@ const customersController = (errResponse, AuthsModel, CustomersModel) => {
 
             // create user access token
             const userPayload = {
-              // eslint-disable-next-line no-underscore-dangle
               uid: authResult._id,
               email: authResult.email,
             };
