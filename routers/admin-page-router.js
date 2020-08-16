@@ -11,7 +11,7 @@ const AdminPageRouter = express.Router();
 
 AdminPageRouter
   .route('/')
-  .get(adminPage)
-  .post(authAdmin, registerCustomerValidator, registerAdmins);
+  .get(adminPage) // admin sign in form
+  .post(authAdmin, registerCustomerValidator, registerAdmins); // admin can sign in
 
 module.exports = { AdminPageRouter };

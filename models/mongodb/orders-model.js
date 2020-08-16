@@ -19,7 +19,11 @@ const OrdersSchema = new mongoose.Schema({
   },
   partnerId: { type: Schema.Types.ObjectId, ref: 'Partners', required: true },
   riderId: { type: Schema.Types.ObjectId, ref: 'Riders', required: true },
-  customerId: { type: Schema.Types.ObjectId, ref: 'Customers', required: true },
+  customerId: { type: Schema.Types.ObjectId, ref: 'Customers' },
+  customerEmail: {
+    type: String, required: true, min: 5, lowercase: true,
+  },
+  customerPhone: { type: String, required: true, min: 5 },
   items: [ItemSchema],
   discount: { type: Number, min: 0.00 },
   address: { type: String, required: true, min: 10 },

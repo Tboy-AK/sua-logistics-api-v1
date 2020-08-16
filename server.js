@@ -11,6 +11,7 @@ const { CustomersRouter } = require('./routers/customers-router');
 const { RidersRouter } = require('./routers/riders-router');
 const { PartnersRouter } = require('./routers/partners-router');
 const { AuthsRouter } = require('./routers/auths-router');
+const { OrdersRouter } = require('./routers/orders-router');
 
 const { urlencoded, json } = express;
 
@@ -28,6 +29,7 @@ server.use('/api', [
   RidersRouter,
   PartnersRouter,
   AuthsRouter,
+  OrdersRouter,
 ]);
 server.use('/admin', [AdminPageRouter, AdminAuthsRouter]);
 
