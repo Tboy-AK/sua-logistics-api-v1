@@ -1,4 +1,4 @@
-const { mongoose } = require('../configs/mongodb-config');
+const { mongoose } = require('../../configs/mongodb-config');
 
 const AuthsSchema = new mongoose.Schema({
   email: {

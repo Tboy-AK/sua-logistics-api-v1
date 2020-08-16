@@ -1,4 +1,4 @@
-const { mongoose } = require('../configs/mongodb-config');
+const { mongoose } = require('../../configs/mongodb-config');
 
 const { Schema } = mongoose;
 

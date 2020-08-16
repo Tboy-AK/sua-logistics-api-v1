@@ -1,4 +1,4 @@
-const { mongoose } = require('../configs/mongodb-config');
+const { mongoose } = require('../../configs/mongodb-config');
 
 const { Schema } = mongoose;
 
@@ -22,6 +22,7 @@ const OrdersSchema = new mongoose.Schema({
   customerId: { type: Schema.Types.ObjectId, ref: 'Customers', required: true },
   items: [ItemSchema],
   discount: { type: Number, min: 0.00 },
+  address: { type: String, required: true, min: 10 },
   desc: { type: String, required: true },
 }, { timestamps: true });
 const OrdersModel = mongoose.model('Orders', OrdersSchema);
