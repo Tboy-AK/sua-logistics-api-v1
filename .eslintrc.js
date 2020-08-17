@@ -10,11 +10,18 @@ module.exports = {
     jasmine: true,
   },
   extends: [
-    'airbnb-base',
+    'plugin:react/recommended',
+    'airbnb',
   ],
   parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
     ecmaVersion: 11,
   },
+  plugins: [
+    'react',
+  ],
   rules: {
     'linebreak-style': ['error', platform() === 'win32' ? 'windows' : 'unix'],
   },

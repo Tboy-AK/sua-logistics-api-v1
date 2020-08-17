@@ -5,21 +5,11 @@ const { sign } = require('jsonwebtoken');
 
 const adminPageController = (errResponse, AuthModel, AdminModel) => {
   const adminPage = (req, res) => {
-    res.status(200).send(`
-    <main>
-      <form method="POST" action="/admin/auths">
-        <label>
-          <span>Email</span>
-          <input type="text" name="email" placeholder="admin@email.com" />
-        </label>
-        <label>
-          <span>Password</span>
-          <input type="password" name="password" placeholder="Password" />
-        </label>
-        <button>Login</button>
-      </form>
-    </main>
-    `);
+    res.status(200).render('admin-root-view', {
+      pageName: 'Sign in as Admin',
+      userType: 'admin',
+      title: 'Admin Login',
+    });
   };
 
   const adminAccess = (req, res) => {
