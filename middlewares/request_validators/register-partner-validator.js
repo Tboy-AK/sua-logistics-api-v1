@@ -27,14 +27,14 @@ const validators = [
     .trim(' ')
     .notEmpty()
     .withMessage('Business name is required')
-    .isLength({ min: 5 })
+    .isLength({ min: 5, max: 50 })
     .withMessage('Business name must be greater than 5 characters')
     .escape(),
   body('address')
     .trim(' ')
     .notEmpty()
     .withMessage('Address is required')
-    .isLength({ min: 10 })
+    .isLength({ min: 10, max: 100 })
     .withMessage('Address must be greater than 10 characters')
     .escape(),
 ];

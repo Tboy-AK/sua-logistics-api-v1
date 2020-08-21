@@ -31,14 +31,18 @@ const validators = [
     .trim(' ')
     .notEmpty()
     .withMessage('First name is required')
-    .isLength({ min: 3 })
+    .isAlpha()
+    .withMessage('First name must be alphabetic')
+    .isLength({ min: 3, max: 30 })
     .withMessage('Name must be greater than 2 characters')
     .escape(),
   body('lastName')
     .trim(' ')
     .notEmpty()
     .withMessage('Last name is required')
-    .isLength({ min: 3 })
+    .isAlpha()
+    .withMessage('Last name must be alphabetic')
+    .isLength({ min: 3, max: 30 })
     .withMessage('Name must be greater than 2 characters')
     .escape(),
 ];
