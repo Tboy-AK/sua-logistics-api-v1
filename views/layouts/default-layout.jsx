@@ -1,6 +1,11 @@
-const React = require('react');
-const Container = require('react-bootstrap/Container');
-const propTypes = require('prop-types');
+import React from 'react';
+import Container from 'react-bootstrap/Container';
+import propTypes from 'prop-types';
+import styled from 'styled-components';
+
+const DefaultLayoutStyles = styled.div`
+  padding: 1emvh 2em;
+`;
 
 const DefaultLayout = ({ title, children }) => (
   <html lang="en">
@@ -15,12 +20,9 @@ const DefaultLayout = ({ title, children }) => (
     </head>
     <body>
       <Container>
-        <div style={{
-          padding: '1emvh 2em',
-        }}
-        >
+        <DefaultLayoutStyles>
           {children}
-        </div>
+        </DefaultLayoutStyles>
       </Container>
     </body>
   </html>
@@ -28,7 +30,7 @@ const DefaultLayout = ({ title, children }) => (
 
 DefaultLayout.propTypes = {
   title: propTypes.string.isRequired,
-  children: propTypes.string.isRequired,
+  children: propTypes.element.isRequired,
 };
 
 module.exports = DefaultLayout;

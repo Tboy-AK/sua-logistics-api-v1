@@ -1,36 +1,49 @@
-const React = require('react');
-const propTypes = require('prop-types');
+import React from 'react';
+import propTypes from 'prop-types';
+import styled from 'styled-components';
+
 const DefaultLayout = require('./layouts/default-layout');
+
+const HomepageStyles = styled.div`
+  max-width: 767px;
+  margin: auto;
+
+  header {
+    padding: 1em 0 2em 0;
+  }
+
+  main {
+    padding: 1em 0;
+
+    h1 {
+      margin-bottom: 1.5rem;
+    }
+
+    h4 {
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  footer {
+    height: 100px;
+    position: fixed;
+    bottom: 0;
+  }
+`;
 
 const Homepage = ({ title }) => (
   <DefaultLayout title={title}>
-    <div style={{
-      maxWidth: '767px',
-      margin: 'auto',
-    }}
-    >
-      <header style={{
-        padding: '1em 0 2em 0',
-      }}
-      >
-        <h1 style={{
-          marginBottom: '1.5rem',
-        }}
-        >
+    <HomepageStyles>
+      <header>
+        <h1>
           SUA Logistics App v1
         </h1>
         <p>
           Make your dispatches on this platform with our trusted dispatch agents
         </p>
       </header>
-      <main style={{
-        padding: '1em 0',
-      }}
-      >
-        <h4 style={{
-          marginBottom: '1.5rem',
-        }}
-        >
+      <main>
+        <h4>
           Getting Started
         </h4>
         <p>
@@ -48,12 +61,7 @@ const Homepage = ({ title }) => (
           route.
         </p>
       </main>
-      <footer style={{
-        height: '100px',
-        position: 'fixed',
-        bottom: 0,
-      }}
-      >
+      <footer>
         <p>
           <span>Author: </span>
           <a href="https://www.linkedin.com/in/tobi-akanji-36a922149">Tobi Akanji</a>
@@ -63,12 +71,16 @@ const Homepage = ({ title }) => (
           <a href="https://github.com/Tboy-AK">Tboy-AK</a>
         </p>
       </footer>
-    </div>
+    </HomepageStyles>
   </DefaultLayout>
 );
 
 Homepage.propTypes = {
-  title: propTypes.string.isRequired,
+  title: propTypes.string,
+};
+
+Homepage.defaultProps = {
+  title: '',
 };
 
 module.exports = Homepage;

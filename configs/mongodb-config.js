@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 let dbConnectionString;
 
@@ -18,7 +19,10 @@ switch (process.env.NODE_ENV) {
 }
 
 mongoose.Promise = Promise;
-mongoose.connect(dbConnectionString, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(
+  dbConnectionString,
+  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true },
+);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 

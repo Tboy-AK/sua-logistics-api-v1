@@ -1,17 +1,20 @@
-const React = require('react');
-const Form = require('react-bootstrap/Form');
-const Button = require('react-bootstrap/Button');
-const propTypes = require('prop-types');
+import React from 'react';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import propTypes from 'prop-types';
+import styled from 'styled-components';
+
+const ActionFormsStyles = styled.div`
+  max-width: '600px';
+  margin: 'auto';
+  padding: '5vh 2em';
+`;
+
 const DefaultLayout = require('./layouts/default-layout');
 
 const ActionForms = ({ title, pageName, userType }) => (
   <DefaultLayout title={title}>
-    <div style={{
-      maxWidth: '600px',
-      margin: 'auto',
-      padding: '5vh 2em',
-    }}
-    >
+    <ActionFormsStyles>
       <h1>{pageName}</h1>
       <Form method="POST" action="/admin/auths">
         <Form.Group controlId="formBasicEmail">
@@ -33,7 +36,7 @@ const ActionForms = ({ title, pageName, userType }) => (
 
         <Button variant="primary" type="submit">Login</Button>
       </Form>
-    </div>
+    </ActionFormsStyles>
   </DefaultLayout>
 );
 

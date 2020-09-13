@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jasmine",
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js -e js,mjs,json,jsx"
   },
   "repository": {
     "type": "git",
